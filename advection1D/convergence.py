@@ -1,16 +1,15 @@
 import numpy as np
 import sys
 import os
+import matplotlib.pyplot as plt
 
 # Add the parent directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import advectutils as autil
 from nwave import *
-import nwave.ioxdmf as iox
 
-def main(lowres_dir, medres_dir, highres_dir, output_file="convergence.curve"):
-    # Match filenames in all three dirs
+def main(lowres_dir, medres_dir, highres_dir):
     filenames = sorted(os.listdir(lowres_dir))
     convergence_series = []
 
@@ -23,33 +22,36 @@ def main(lowres_dir, medres_dir, highres_dir, output_file="convergence.curve"):
             continue  # skip if one is missing
 
         conv = autil.convergence(low_file, med_file, high_file)
-        conv_norm = np.linalg.norm(conv, ord=np.inf)  # e.g., max norm
 
-        # Extract time from filename if encoded (or from file contents)
-        # Example: filename = "phi_0005.curve" -> time = 0.005
         try:
             time = float(fname.strip("phi_").strip(".curve")) * 0.001
         except:
             time = len(convergence_series) * 0.001  # fallback
 
-        convergence_series.append((time, conv_norm))
+        convergence_series.append((time, conv))
 
-    output_dir = "convergence_output" # Sets the output directory
-    os.makedirs(output_dir, exist_ok=True) # Create the directories if they don't exist
+    convergence_series = np.array(convergence_series)
+    times = convergence_series[:, 0]
+    values = convergence_series[:, 1]
 
-    # Write convergence curve file
-    output_path = os.path.join(output_dir, output_file)
-    with open(output_path, "w") as f:
+    output_file = "convergence_series.txt"
+    np.savetxt(output_file, convergence_series, header="time convergence", comments='')
+    print(f"Convergence series saved to {output_file}")
 
-        f.write("# time    convergence\n")
-        for time, conv_val in convergence_series:
-            f.write(f"{time:.8e} {conv_val:.8e}\n")
-
+    # Plot with logarithmic Y-axis
+    plt.figure(figsize=(8, 5))
+    plt.semilogy(times, values, marker='o', linestyle='-', color='red', markersize=3)
+    plt.xlabel("Time")
+    plt.ylabel("Convergence")
+    plt.title("Convergence vs Time")
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+    plt.ylim(1e-1, 1000)
+    plt.tight_layout()
+    plt.show()
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("Usage:  python convergence.py <low> <med> <high>")
         sys.exit(1)
 
-    import sys
     main(sys.argv[1], sys.argv[2], sys.argv[3])

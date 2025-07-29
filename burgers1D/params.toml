@@ -1,17 +1,17 @@
-Nt = 2000
+Nt = 50000
 
 Nx = 1001
-Xmin = -0.5
-Xmax = 0.5
+Xmin = -100
+Xmax = 100
 
 cfl = 0.1
-D1 = "BYUP4_121R"
-D2 = "E642"
-diss_alpha = 0.0
+D1 = "JP6"
+D2 = "JP6"
+diss_alpha = 1.0
 
 id_x0 = 0.0
 id_omega = 50.0
 id_amp = 1.0
 
-output_dir = "output_burgers"
-output_interval = 5
+output_dir = "low"
+output_interval = 1000

@@ -22,7 +22,7 @@ FilterBoundary = true
 
 # initial data types = [ "Puncture", "EddingtonFinkelstein" ]
 Mass = 1.0
-collapsed_lapse = false
+collapsed_lapse = true
 initial_data = "Puncture"
 
 # output parameters

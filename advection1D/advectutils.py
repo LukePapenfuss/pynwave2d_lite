@@ -1,5 +1,6 @@
 import numpy as np
 from nwave import *
+import matplotlib.pyplot as plt
 
 def get_filter_type(filter_str):
     try:
@@ -71,9 +72,9 @@ def write_curve(filename, time, x, eqs):
             f.write(f"{xi:.8e} {di:.8e}\n")
 
 def convergence(lowres_file, medres_file, highres_file):
-    lowres = np.loadtxt(lowres_file, skiprows=2)
-    medres = np.loadtxt(medres_file, skiprows=2)
-    highres = np.loadtxt(highres_file, skiprows=2)
+    lowres = np.loadtxt(lowres_file, skiprows=3)
+    medres = np.loadtxt(medres_file, skiprows=4)
+    highres = np.loadtxt(highres_file, skiprows=6)
 
     # Subsample to align resolutions
     medres = medres[::2]
@@ -85,12 +86,14 @@ def convergence(lowres_file, medres_file, highres_file):
     medres = medres[:n]
     highres = highres[:n]
 
-    # Compute differences
-    diff1 = np.abs(medres - lowres)
-    diff2 = np.abs(highres - medres)
+    u_low = lowres[:, 1]
+    u_med = medres[:, 1]
+    u_high = highres[:, 1]
 
-    # Prevent divide-by-zero
-    with np.errstate(divide='ignore', invalid='ignore'):
-        conv = np.where(diff2 != 0, diff1 / diff2, 0.0)
+    diff1 = np.linalg.norm(u_med - u_low)
+    diff2 = np.linalg.norm(u_high - u_med)
 
-    return conv
+    # Convergence ratio (scalar)
+    conv_ratio = diff1 / diff2 if diff2 != 0 else 0.0
+
+    return conv_ratio

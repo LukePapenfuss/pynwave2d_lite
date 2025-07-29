@@ -22,6 +22,7 @@ CompactFirstDerivatives = [
     DerivType.D1_DSQ6B_RIGHT,
     DerivType.D1_BYU_C6_Op10,
     DerivType.D1_BYU_P4_Op18,
+    DerivType.D1_BYU_P4_121R
 ]
 CompactSecondDerivatives = [
     DerivType.D2_ME44,
@@ -933,6 +934,69 @@ def _coeffs_D1_BYU_P4_Op18(D_coeffs):
     Rmat = [Q1DiagInterior, Q1DiagBoundary, (3, 3), 1]
     return Lmat, Rmat
 
+# This Operator was added as a test/exercise for Luke
+def _coeffs_D1_BYU_P4_121R(D_coeffs):
+    alpha0 = 0.5770460201292381
+    alpha = alpha0 + D_coeffs[0]
+
+    beta = 0.08900836845092142
+    a1 = 0.6517078440898839
+    a2 = 0.24815882627035918
+    a3 = 0.006009630649852392
+    gamma01 = 9.82050086297005
+    gamma02 = 10.282867809058313
+    gamma10 = 0.08185064221829087
+    gamma12 = 1.6890627481714804
+    gamma13 = 0.4961478931388701
+    gamma20 = 0.010832502509737819
+    gamma21 = 0.2381868068661776
+    gamma23 = 1.128279076992181
+    gamma24 = 0.28864969919845446
+    a00 =  - 3.73445251380582
+    a01 =  - 10.765902315893966
+    a02 = 11.158777481815811
+    a03 = 3.8932795799881186
+    a04 =  - 0.6389839738157034
+    a05 = 0.09587727397420936
+    a06 =  - 0.008595531676508965
+    a10 =  - 0.31850909623427476
+    a11 =  - 1.396944235854646
+    a12 = 0.5364016058704685
+    a13 = 1.1223168928950014
+    a14 = 0.059450604503400145
+    a15 =  - 0.0027438380250710795
+    a16 = 0.00002806684476978311
+    a20 =  - 0.046786865516800155
+    a21 =  - 0.5104482821608083
+    a22 =  - 0.7700330722473107
+    a23 = 0.6228933619765842
+    a24 = 0.6727125159356983
+    a25 = 0.033041689527405986
+    a26 =  - 0.0013793475144312974
+
+    # boundary elements for P matrix for 1st derivative
+    P1DiagBoundary = [
+        np.array([1.0, gamma01, gamma02]),
+        np.array([gamma10, 1.0, gamma12, gamma13]),
+        np.array([gamma20, gamma21, 1.0, gamma23, gamma24]),
+    ]
+
+    # diagonal elements for P matrix for 1st derivative
+    P1DiagInterior = np.array([beta, alpha, 1.0, alpha, beta])
+
+    # boundary elements for Q matrix for 1st derivative
+    Q1DiagBoundary = [
+        np.array([a00, a01, a02, a03, a04, a05, a06]),
+        np.array([a10, a11, a12, a13, a14, a15, a16]),
+        np.array([a20, a21, a22, a23, a24, a25, a26]),
+    ]
+
+    # diagonal elements for Q matrix for 1st derivative
+    Q1DiagInterior = np.array([-a3, -a2, -a1, 0.0, a1, a2, a3])
+
+    Lmat = [P1DiagInterior, P1DiagBoundary, (2, 2), -1]
+    Rmat = [Q1DiagInterior, Q1DiagBoundary, (3, 3), 1]
+    return Lmat, Rmat
 
 def build_derivative(N: int, dtype: DerivType):
     """
@@ -987,6 +1051,8 @@ def build_derivative(N: int, dtype: DerivType):
         Pmat, Qmat = _coeffs_D1_BYU_C6_Op10([0.0])
     elif dtype == DerivType.D1_BYU_P4_Op18:
         Pmat, Qmat = _coeffs_D1_BYU_P4_Op18([0.0])
+    elif dtype == DerivType.D1_BYU_P4_121R:
+        Pmat, Qmat = _coeffs_D1_BYU_P4_121R([0.0])
     else:
         raise ValueError(f"Unsupported derivative type: {dtype}")
 

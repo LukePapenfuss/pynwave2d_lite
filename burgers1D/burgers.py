@@ -38,7 +38,7 @@ class Burgers(Equations):
         x0 = params["id_x0"]
         amp, omega = params["id_amp"], params["id_omega"]
         # X = np.meshgrid(x, y, indexing="ij")
-        self.u[0][:] = amp * np.exp(-omega * ((x - x0) ** 2))
+        self.u[0][:] = 2.0 / (1.0 + np.exp(x / params["diss_alpha"]**2))
 
     def apply_bcs(self, u, g):
         print("no bcs")

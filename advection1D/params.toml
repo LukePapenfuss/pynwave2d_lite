@@ -1,12 +1,12 @@
 Nt = 25000
 
-Nx = 101
+Nx = 401
 Xmin = 0
 Xmax = 1
 
 cfl = 0.1
 D1 = "JP6"
-D2 = "E642"
+D2 = "JP6"
 c = 0.05
 diss_alpha = 0.0
 
@@ -14,5 +14,5 @@ id_x0 = -0.25
 id_omega = 100.0
 id_amp = 1.0
 
-output_dir = "output_advec"
+output_dir = "high"
 output_interval = 500

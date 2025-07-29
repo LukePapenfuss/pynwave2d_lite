@@ -70,3 +70,30 @@ def write_curve(filename, time, x, eqs):
         for xi, di in zip(x, eqs.u[0]):
             f.write(f"{xi:.8e} {di:.8e}\n")
         
+
+def convergence(lowres_file, medres_file, highres_file):
+    lowres = np.loadtxt(lowres_file, skiprows=3)
+    medres = np.loadtxt(medres_file, skiprows=5)
+    highres = np.loadtxt(highres_file, skiprows=7)
+
+    # Subsample to align resolutions
+    medres = medres[::2]
+    highres = highres[::4]
+
+    # Trim to smallest length to ensure alignment
+    n = min(len(lowres), len(medres), len(highres))
+    lowres = lowres[:n]
+    medres = medres[:n]
+    highres = highres[:n]
+
+    u_low = lowres[:, 1]
+    u_med = medres[:, 1]
+    u_high = highres[:, 1]
+
+    diff1 = np.linalg.norm(u_med - u_low)
+    diff2 = np.linalg.norm(u_high - u_med)
+
+    # Convergence ratio (scalar)
+    conv_ratio = diff1 / diff2 if diff2 != 0 else 0.0
+
+    return conv_ratio

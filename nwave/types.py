@@ -70,10 +70,11 @@ class DerivType(Enum):
     D1_DSQ6B_RIGHT = 27
     D1_BYU_C6_Op10 = 28
     D1_BYU_P4_Op18 = 29
-    D1_E42 = 30
-    D2_E42 = 31
-    D1_E666 = 32
-    D2_E666 = 33
+    D1_BYU_P4_121R = 30
+    D1_E42 = 31
+    D2_E42 = 32
+    D1_E666 = 33
+    D2_E666 = 34
 
 
 class CFDSolve(Enum):
@@ -125,6 +126,7 @@ d1_type_map = {
     "ME642": DerivType.D1_ME642,
     "BYUC6_Op10": DerivType.D1_BYU_C6_Op10,
     "BYUP4_Op18": DerivType.D1_BYU_P4_Op18,
+    "BYUP4_121R": DerivType.D1_BYU_P4_121R,
 }
 
 d2_type_map = {
