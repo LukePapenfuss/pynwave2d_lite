@@ -22,7 +22,7 @@ class Advection(Equations):
     def set_c(self, c):
         self.c = c
 
-    def rhs(self, dtu, u, g): # Creates the rhs of the equation dphi\dt = ...
+    def rhs(self, dtu, u, g, t): # Creates the rhs of the equation dphi\dt = ...
         dtphi = dtu[0]
         phi = u[0]
         X = g.xi[0] # Creates linspaces X and Y based on the given grid
@@ -34,7 +34,7 @@ class Advection(Equations):
         ) # This is the rhs of an advection equation with a dissipative term
 
         # BCs
-        dtphi[0] = 0.0
+        # dtphi[0] = 0.0
         # dtphi[-1] = 0.0
 
     def initialize(self, g, params):
@@ -43,7 +43,9 @@ class Advection(Equations):
         amp, omega = params["id_amp"], params["id_omega"]
         # X = np.meshgrid(x, y, indexing="ij")
         # self.u[0][:] = amp * np.exp(-omega * ((x - x0) ** 2))
-        self.u[0][:] = np.sin(10 * np.pi * x)
+        self.u[0][:] = np.sin(2 * np.pi * x)
 
-    def apply_bcs(self, u, g):
-        print("no bcs")
+    def apply_bcs(self, u, g, t):
+        x = g.xi[0]
+        u[0][0] = np.sin(2 * np.pi * t)
+        u[0][-1] = np.sin(2 * np.pi * t - 2 * np.pi * x[-1])
