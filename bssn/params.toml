@@ -1,0 +1,31 @@
+Nt = 10000
+Nx =  10000
+Xmin =-100.0
+Xmax = 100.0
+
+NGhost = 3
+cfl = 0.10
+eta = 2.0
+D1 = "E642"
+D2 = "E642"
+
+Filter = "KO6"
+FilterKOsigma = 0.5
+FilterBoundary = true
+
+#Filter = "JTT8"
+#FilterApply = "Vars"
+#FilterFrequency = 10
+#FilterAlpha = 0.4
+#FilterBeta = 0.4
+
+
+# initial data types = [ "Puncture", "EddingtonFinkelstein" ]
+Mass = 1.0
+collapsed_lapse = true
+initial_data = "Puncture"
+
+# output parameters
+output_dir = "output_bssn"
+output_interval = 50
+print_interval = 5
