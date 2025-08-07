@@ -27,7 +27,7 @@ class RK4:
             self.k4.append(np.zeros(tuple(e.shp)))
             self.us.append(np.zeros(tuple(e.shp)))
 
-    def step(self, e: Equations, g: Grid, dt):
+    def step(self, e: Equations, g: Grid, dt, t):
         LTRACE = False
 
         nu = len(e.u)
@@ -53,7 +53,7 @@ class RK4:
                 f"@@@ RK1A |Ex|={l2norm(u0[0])}, |Ey|={l2norm(u0[1])}, |Hz|={l2norm(u0[2])}"
             )
             write_matrix_to_file("Hz_begin", u0[2])
-        e.rhs(k1, u0, g)
+        e.rhs(k1, u0, g, t)
         if self.do_rhs_filter:
             for i in range(nu):
                 # print(f"calling filter {i}. sigma = {g.Filter.get_sigma()}")
@@ -70,7 +70,7 @@ class RK4:
             write_matrix_to_file("Ey_B", us[1])
 
         if e.apply_bc == BCType.FUNCTION:
-            e.apply_bcs(us, g)
+            e.apply_bcs(us, g, t+0.5*dt)
         if LTRACE:
             print(
                 f"@@@ RK1C |Ex|={l2norm(us[0])}, |Ey|={l2norm(us[1])}, |Hz|={l2norm(us[2])}"
@@ -79,7 +79,7 @@ class RK4:
             write_matrix_to_file("Ey_C", us[1])
 
         # Stage 2
-        e.rhs(k2, us, g)
+        e.rhs(k2, us, g, t+0.5*dt)
         if self.do_rhs_filter:
             for i in range(nu):
                 wrk = rhsfilter.filter(us[i])
@@ -87,10 +87,10 @@ class RK4:
         for i in range(nu):
             us[i][:] = u0[i][:] + 0.5 * dt * k2[i][:]
         if e.apply_bc == BCType.FUNCTION:
-            e.apply_bcs(us, g)
+            e.apply_bcs(us, g, t+0.5*dt)
 
         # Stage 3
-        e.rhs(k3, us, g)
+        e.rhs(k3, us, g, t+0.5*dt)
         if self.do_rhs_filter:
             for i in range(nu):
                 wrk = rhsfilter.filter(us[i])
@@ -98,10 +98,10 @@ class RK4:
         for i in range(nu):
             us[i][:] = u0[i][:] + dt * k3[i][:]
         if e.apply_bc == BCType.FUNCTION:
-            e.apply_bcs(us, g)
+            e.apply_bcs(us, g, t+dt)
 
         # Stage 4
-        e.rhs(self.k4, us, g)
+        e.rhs(self.k4, us, g, t+dt)
         if self.do_rhs_filter:
             for i in range(nu):
                 wrk = rhsfilter.filter(us[i])
@@ -109,4 +109,4 @@ class RK4:
         for i in range(nu):
             u0[i][:] += dt / 6 * (k1[i][:] + 2 * k2[i][:] + 2 * k3[i][:] + k4[i][:])
         if e.apply_bc == BCType.FUNCTION:
-            e.apply_bcs(u0, g)
+            e.apply_bcs(u0, g, t+dt)
